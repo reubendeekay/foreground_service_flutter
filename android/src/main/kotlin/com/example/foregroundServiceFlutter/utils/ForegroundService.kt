@@ -43,7 +43,6 @@ class ForegroundService: Service(), NatsDataCollector {
     private lateinit var locationCallback: LocationCallback
     private var currentLatLng: LatLng? = null
     private lateinit var natsManager: NatsManager
-    private var tripNatsManager: NatsManager? = null
     private var isConnected = false
 //    private val sharedPreferencesHelper: SharedPreferencesHelper by inject()
 
@@ -70,7 +69,6 @@ class ForegroundService: Service(), NatsDataCollector {
         sharedPreferences = getSharedPreferences("noData",Context.MODE_PRIVATE)
 
         natsManager = NatsManager(this)
-        tripNatsManager = NatsManager(this)
         val tripUsername =sharedPreferences.getString(Constants.prefUsernameKey,"nothing")
         val tripPassword = sharedPreferences.getString(Constants.prefPasswordKey,"nothing")
         val natsUrl = sharedPreferences.getString(Constants.prefNatsUrlKey,"nothing")
@@ -205,20 +203,7 @@ val carColor = sharedPreferences.getString(Constants.prefCarColorKey,"")
 
     override fun setConnect(isConnected: Boolean) {
         this.isConnected = isConnected
-        if (isConnected) {
-            val userId = sharedPreferences.getLong(Constants.prefDriverIdKey,0)
 
-          tripNatsManager?.subscribe(
-
-                Constants.defaultUserTopic +userId.toString()
-
-            )
-
-            //Listen to trip requests
-
-
-
-        }
     }
 
     override fun setResponse(response: String) {
@@ -241,8 +226,8 @@ val carColor = sharedPreferences.getString(Constants.prefCarColorKey,"")
     override fun onDestroy() {
         super.onDestroy()
         fusedLocationProviderClient?.removeLocationUpdates(locationCallback)
-        natsManager.close()
-        tripNatsManager?.close()
+        //Check if natsManager  are initialized
+            natsManager.close()
         Log.e("service","service destroyed")
     }
 
