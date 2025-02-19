@@ -1,0 +1,66 @@
+buildscript {
+    ext.kotlin_version = '1.8.10'
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.7.3'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+plugins {
+    id "com.android.library"
+    id "kotlin-android"
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+android {
+    namespace "com.example.foregroundServiceFlutter"
+    compileSdkVersion 34
+    ndkVersion "27.0.12077973"
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        minSdkVersion 23
+    }
+}
+
+dependencies {
+    implementation "com.android.support:multidex:1.0.3"
+    implementation platform("org.jetbrains.kotlin:kotlin-bom:1.8.0")
+    implementation "io.nats:jnats:2.11.2"
+    implementation "androidx.localbroadcastmanager:localbroadcastmanager:1.1.0"
+    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
+    implementation "com.google.android.gms:play-services-location:20.0.0"
+    implementation 'com.google.android.libraries.navigation:navigation:6.0.0'
+    implementation "io.insert-koin:koin-core:3.0.1"
+    implementation "io.insert-koin:koin-android:3.0.1"
+    testImplementation 'androidx.test:core:1.0.0'
+    implementation 'androidx.window:window:1.0.0'
+    implementation 'androidx.window:window-java:1.0.0'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs_nio:2.0.4'
+
+
+}
+
+

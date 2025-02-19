@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="facebook_app_id">APP_ID</string>
+  <string name="facebook_client_token">TOKEN</string>
+  <string name="freshchat_file_provider_authority">com.example.demoapp.provider
+</string>
+
+</resources>
