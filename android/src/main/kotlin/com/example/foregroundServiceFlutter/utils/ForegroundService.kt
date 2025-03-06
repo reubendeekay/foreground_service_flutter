@@ -227,7 +227,9 @@ val carColor = sharedPreferences.getString(Constants.prefCarColorKey,"")
         super.onDestroy()
         fusedLocationProviderClient?.removeLocationUpdates(locationCallback)
         //Check if natsManager  are initialized
+        if (this::natsManager.isInitialized){
             natsManager.close()
+        }
         Log.e("service","service destroyed")
     }
 
