@@ -77,7 +77,11 @@ class NatsManager(private val dataCollector: NatsDataCollector) {
     }
 
     fun close(){
-        natsConnection.close()
+        //Check if the connection is not null and is initialized
+        if (this::natsConnection.isInitialized && connect) {
+            natsConnection.close()
+        }
+
     }
 
     @Throws(Exception::class)
