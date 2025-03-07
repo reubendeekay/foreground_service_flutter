@@ -49,12 +49,17 @@ class ForegroundService: Service(), NatsDataCollector {
 
     companion object {
 
-        fun startService(context: Context) {
-            val message = "You are online"
-            val startIntent = Intent(context, ForegroundService::class.java)
-            startIntent.putExtra("inputExtra", message)
-            ContextCompat.startForegroundService(context, startIntent)
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
 
+        fun startService(context: Context) {
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(context as Activity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
+            } else {
+                val message = "You are online"
+                val startIntent = Intent(context, ForegroundService::class.java)
+                startIntent.putExtra("inputExtra", message)
+                ContextCompat.startForegroundService(context, startIntent)
+            }
         }
 
         fun stopService(context: Context) {
@@ -112,41 +117,36 @@ class ForegroundService: Service(), NatsDataCollector {
         return START_NOT_STICKY
     }
 
+
     @SuppressLint("MissingPermission")
     private fun setUpLocationListener() {
-        fusedLocationProviderClient =  LocationServices.getFusedLocationProviderClient(this)
-        val locationRequest = LocationRequest().setInterval(10000).setFastestInterval(5000)
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+            val locationRequest = LocationRequest().setInterval(10000).setFastestInterval(5000)
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
 
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                super.onLocationResult(locationResult)
-                for (location in locationResult.locations) {
-
-                    currentLatLng = LatLng(location.latitude, location.longitude)
-                    currentLatLng?.let{
-//                        val status = if(sharedPreferencesHelper.getSavedBoolean(Constants.prefIsDriverOnline)) {
-//                            Constants.driverAvailable
-//                        } else {
-//                            Constants.driverUnavailable
-//                        }
-
-                        if (isConnected) {
-
-//                                updateDriverStatus(status)
-                            updateDriverStatus(bearing = location.bearing.toDouble())
-
+            locationCallback = object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult) {
+                    super.onLocationResult(locationResult)
+                    for (location in locationResult.locations) {
+                        currentLatLng = LatLng(location.latitude, location.longitude)
+                        currentLatLng?.let {
+                            if (isConnected) {
+                                updateDriverStatus(bearing = location.bearing.toDouble())
+                            }
                         }
-
                     }
                 }
             }
-        }
-        fusedLocationProviderClient?.requestLocationUpdates(
+            fusedLocationProviderClient?.requestLocationUpdates(
                 locationRequest,
                 locationCallback,
                 Looper.myLooper()
-        )
+            )
+        } else {
+            // Handle the case where permissions are not granted
+            Log.e("ForegroundService", "Location permissions not granted")
+        }
     }
 
 //    private fun updateDriverStatus(status: Int) {
