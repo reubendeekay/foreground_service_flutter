@@ -46,6 +46,7 @@ dependencies {
     implementation 'com.google.android.libraries.navigation:navigation:6.0.0'
     implementation "io.insert-koin:koin-core:3.0.1"
     implementation "io.insert-koin:koin-android:3.0.1"
+    implementation 'androidx.core:core:1.13.1'
     testImplementation 'androidx.test:core:1.0.0'
     implementation 'androidx.window:window:1.0.0'
     implementation 'androidx.window:window-java:1.0.0'
